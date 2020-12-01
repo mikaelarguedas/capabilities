@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+from __future__ import absolute_import
 from ..common import assert_raises_regex
 
 from capabilities.specs.common import validate_spec_name

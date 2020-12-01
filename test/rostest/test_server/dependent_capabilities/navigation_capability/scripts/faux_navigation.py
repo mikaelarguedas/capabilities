@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
 from math import sin
 
 import rospy
 from geometry_msgs.msg import Twist
+from six.moves import range
 
 
 def main():

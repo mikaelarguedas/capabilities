@@ -1,10 +1,12 @@
 from __future__ import print_function
 
+from __future__ import absolute_import
 import os
 
 from ..common import assert_raises_regex
 
 from capabilities.specs import interface
+import six
 
 test_data_dir = os.path.join(os.path.dirname(__file__), 'interfaces')
 
@@ -21,7 +23,7 @@ def check_navigation(ci):
     with assert_raises_regex(AttributeError, "can't set attribute"):
         ci.dynamic_parameters = ['max_speed2']
     assert {} == ci.actions
-    assert 'get_map' in ci.services.keys()
+    assert 'get_map' in list(ci.services.keys())
     assert 'nav_msgs/GetMap' == ci.services['get_map'].type
     ci.provided_topics
     ci.required_topics
@@ -32,7 +34,7 @@ def check_navigation(ci):
     ci.provided_parameters
     ci.required_parameters
     check_interface(ci)
-    str(ci.topics.values()[0])
+    str(list(ci.topics.values())[0])
 
 
 def check_all_interfaces(ci):
@@ -80,7 +82,7 @@ test_files_map = {
 
 def test_capability_interface_from_file_path():
     default_checker = lambda x: None
-    for test_file, (checker, expected_exception, expected_exception_regex) in test_files_map.iteritems():
+    for test_file, (checker, expected_exception, expected_exception_regex) in six.iteritems(test_files_map):
         checker = checker or default_checker
         print('running test on file ' + test_file)
         test_file_path = os.path.join(test_data_dir, test_file)

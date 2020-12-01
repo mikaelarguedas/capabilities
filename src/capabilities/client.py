@@ -51,6 +51,7 @@ Typical usage::
 
 """
 
+from __future__ import absolute_import
 import atexit
 
 import rospy
@@ -134,7 +135,7 @@ class CapabilitiesClient(object):
         :returns: :py:obj:`True` is the services are available, :py:obj:`False` otherwise (timeout)
         :rtype: :py:obj:`bool`
         """
-        services = self._services.keys() if services is None else services
+        services = list(self._services.keys()) if services is None else services
         assert isinstance(services, list), services
         for service in services:
             if service not in self._services:

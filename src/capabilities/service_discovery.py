@@ -46,6 +46,7 @@ created using the capability specs (interfaces, semantic interfaces,
 and providers) availble to the remote ``capability_server``.
 """
 
+from __future__ import absolute_import
 import rospy
 
 from capabilities.srv import GetCapabilitySpecs

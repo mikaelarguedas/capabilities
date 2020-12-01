@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 
+from __future__ import absolute_import
 import os
 import sys
 import unittest
@@ -14,6 +15,7 @@ import rospy
 from rospy.service import ServiceException
 
 from rosservice import get_service_class_by_name
+from six.moves import range
 
 TEST_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 

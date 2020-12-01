@@ -82,12 +82,14 @@ You can use this API like this::
 
 from __future__ import print_function
 
+from __future__ import absolute_import
 import os
 import yaml
 
 from capabilities.specs.common import validate_spec_name
 
 from capabilities.specs.remappings import RemapCollection
+import six
 
 
 class InvalidProvider(Exception):
@@ -197,7 +199,7 @@ def capability_provider_from_dict(spec, file_name='<dict>'):
         raise InvalidProvider("Invalid depends_on section, expected dict got: '{0}'".format(type(depends_on)),
                               file_name)
     valid_conditionals = ['provider']
-    for interface, conditions in depends_on.iteritems():
+    for interface, conditions in six.iteritems(depends_on):
         if not isinstance(conditions, dict):
             raise InvalidProvider("Invalid depends_on conditional section, expected dict got: '{0}'"
                                   .format(type(conditions)), file_name)

@@ -1,10 +1,12 @@
 from __future__ import print_function
 
+from __future__ import absolute_import
 import os
 
 from ..common import assert_raises_regex
 
 from capabilities.specs import provider
+import six
 
 test_data_dir = os.path.join(os.path.dirname(__file__), 'providers')
 
@@ -58,7 +60,7 @@ test_files_map = {
 def test_capability_provider_from_file_path():
     default_checker = lambda x: None
     print()  # Keeps the output clean when doing nosetests -s
-    for test_file, (checker, expected_exception, expected_exception_regex) in test_files_map.iteritems():
+    for test_file, (checker, expected_exception, expected_exception_regex) in six.iteritems(test_files_map):
         checker = checker or default_checker
         print('running test on file ' + test_file)
         test_file_path = os.path.join(test_data_dir, test_file)

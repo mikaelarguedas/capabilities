@@ -43,6 +43,7 @@ to capabilities.
 
 from __future__ import print_function
 
+from __future__ import absolute_import
 import argparse
 import logging
 import os
@@ -434,9 +435,9 @@ class CapabilityServer(object):
                     spec_index.remove_provider(provider.name)
         self.__spec_index = spec_index
         # Prune spec_file_index
-        spec_paths = spec_index.interface_paths.values() + \
-            spec_index.semantic_interface_paths.values() + \
-            spec_index.provider_paths.values()
+        spec_paths = list(spec_index.interface_paths.values()) + \
+            list(spec_index.semantic_interface_paths.values()) + \
+            list(spec_index.provider_paths.values())
         for package_name, package_dict in self.spec_file_index.items():
             for spec_type in ['capability_interface', 'semantic_capability_interface', 'capability_provider']:
                 package_dict[spec_type][:] = [path for path in package_dict[spec_type] if path in spec_paths]
@@ -540,7 +541,7 @@ class CapabilityServer(object):
         # Update the capability
         capability = event.capability
         with self.__graph_lock:
-            if capability not in self.__capability_instances.keys():
+            if capability not in list(self.__capability_instances.keys()):
                 rospy.logerr("Unknown capability instance: '{0}'"
                              .format(capability))
                 return
@@ -585,7 +586,7 @@ class CapabilityServer(object):
             if cap.started_by == USER_SERVICE_REASON:
                 # Started by user, do not garbage collect this
                 continue
-            rdepends = get_reverse_depends(cap.interface, self.__capability_instances.values())
+            rdepends = get_reverse_depends(cap.interface, list(self.__capability_instances.values()))
             if rdepends:
                 # Someone depends on me, do not garbage collect this
                 rospy.logdebug("Keeping the '{0}' provider of the '{1}' interface, ".format(cap.name, cap.interface) +
@@ -636,7 +637,7 @@ class CapabilityServer(object):
                          "which is not in the list of capability instances.")
             return
         capability = self.__capability_instances[name]
-        rdepends = get_reverse_depends(name, self.__capability_instances.values())
+        rdepends = get_reverse_depends(name, list(self.__capability_instances.values()))
         for cap in rdepends:
             if cap.state in ['stopping', 'terminated']:  # pragma: no cover
                 # It is possible that this cap was stopped by another cap in this list
@@ -685,7 +686,7 @@ class CapabilityServer(object):
         return providers  # Could be empty
 
     def __start_capability(self, capability, preferred_provider):
-        if capability not in self.__spec_index.interfaces.keys() + self.__spec_index.semantic_interfaces.keys():
+        if capability not in list(self.__spec_index.interfaces.keys()) + list(self.__spec_index.semantic_interfaces.keys()):
             raise RuntimeError("Capability '{0}' not found.".format(capability))
         # If no preferred provider is given, use the default
         preferred_provider = preferred_provider or self.__default_providers[capability]
@@ -909,9 +910,9 @@ class CapabilityServer(object):
 
     def _handle_get_providers(self, req):
         if req.interface:
-            if req.interface not in self.__spec_index.interfaces.keys() + self.__spec_index.semantic_interfaces.keys():
+            if req.interface not in list(self.__spec_index.interfaces.keys()) + list(self.__spec_index.semantic_interfaces.keys()):
                 raise RuntimeError("Capability Interface '{0}' not found.".format(req.interface))
-            providers = self.__get_providers_for_interface(req.interface, allow_semantic=req.include_semantic).keys()
+            providers = list(self.__get_providers_for_interface(req.interface, allow_semantic=req.include_semantic).keys())
             default_provider = self.__default_providers[req.interface]
         else:
             providers = self.__spec_index.provider_names
@@ -942,7 +943,7 @@ class CapabilityServer(object):
             running_capability.capability = Capability(instance.interface, instance.name)
             running_capability.started_by = instance.started_by
             running_capability.pid = instance.pid
-            rdepends = get_reverse_depends(instance.interface, self.__capability_instances.values())
+            rdepends = get_reverse_depends(instance.interface, list(self.__capability_instances.values()))
             for dep in rdepends:
                 running_capability.dependent_capabilities.append(Capability(dep.interface, dep.name))
             resp.running_capabilities.append(running_capability)
@@ -961,7 +962,7 @@ class CapabilityServer(object):
 
     def _handle_get_remappings(self, req):
         interface = None
-        if req.spec in self.__capability_instances.keys():
+        if req.spec in list(self.__capability_instances.keys()):
             interface = self.__capability_instances[req.spec]
         else:
             providers = dict([(i.provider.name, i) for i in self.__capability_instances.values()])
