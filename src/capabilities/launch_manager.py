@@ -180,7 +180,7 @@ class LaunchManager(object):
 
     def run_launch_file(self, launch_file, provider, manager=False):
         with self.__running_launch_files_lock:
-            if launch_file is not None and launch_file in [x[3] for x in self.__running_launch_files.values()]:
+            if launch_file is not None and launch_file in [x[3] for x in list(self.__running_launch_files.values())]:
                 raise RuntimeError("Launch file at '{0}' is already running."
                                    .format(launch_file))
             if launch_file is None:

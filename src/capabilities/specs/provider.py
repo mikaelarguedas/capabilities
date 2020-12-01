@@ -276,7 +276,7 @@ class CapabilityProvider(object):
   depend on relationships:
 {depends_on_str}
 }}
-""".format(depends_on_str="[\n" + "\n".join([str(v) for v in self.__depends_on.values()]) + "\n]",
+""".format(depends_on_str="[\n" + "\n".join([str(v) for v in list(self.__depends_on.values())]) + "\n]",
            remappings_str=str(self.__remap_collection) + "\n",
            nodelet_manager_str='' if self.nodelet_manager is None else '\n' + self.nodelet_manager + '\n',
            **self.__dict__)

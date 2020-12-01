@@ -388,7 +388,7 @@ class CapabilityServer(object):
 
     def shutdown(self):
         """Stops the capability server and cleans up any running processes"""
-        for instance in self.__capability_instances.values():  # pragma: no cover
+        for instance in list(self.__capability_instances.values()):  # pragma: no cover
             if instance.state in ['running', 'launching']:
                 instance.stopped()
             if instance.state == 'waiting':
@@ -399,7 +399,7 @@ class CapabilityServer(object):
         package_index = package_index_from_package_path(self.__package_paths)
         self.spec_file_index = spec_file_index_from_package_index(package_index)
         # Prune packages by black and white list
-        for package in self.spec_file_index.keys():
+        for package in list(self.spec_file_index.keys()):
             if self.__package_whitelist and package not in self.__package_whitelist:
                 rospy.loginfo("Package '{0}' not in whitelist, skipping.".format(package))
                 del self.spec_file_index[package]
@@ -419,7 +419,7 @@ class CapabilityServer(object):
             (spec_index.semantic_interfaces, spec_index.remove_semantic_interface),
             (spec_index.providers, spec_index.remove_provider)
         ]:
-            for spec in specs.keys():
+            for spec in list(specs.keys()):
                 if self.__whitelist and spec not in self.__whitelist:
                     removed_interfaces.append(spec)
                     remove_func(spec)
@@ -430,7 +430,7 @@ class CapabilityServer(object):
                     rospy.loginfo("Spec '{0}' is in the blacklist, skipping.".format(spec))
         # Remove providers which no longer have an interface
         for interface in removed_interfaces:
-            for provider in spec_index.providers.values():
+            for provider in list(spec_index.providers.values()):
                 if provider.implements == interface:
                     spec_index.remove_provider(provider.name)
         self.__spec_index = spec_index
@@ -438,7 +438,7 @@ class CapabilityServer(object):
         spec_paths = list(spec_index.interface_paths.values()) + \
             list(spec_index.semantic_interface_paths.values()) + \
             list(spec_index.provider_paths.values())
-        for package_name, package_dict in self.spec_file_index.items():
+        for package_name, package_dict in list(self.spec_file_index.items()):
             for spec_type in ['capability_interface', 'semantic_capability_interface', 'capability_provider']:
                 package_dict[spec_type][:] = [path for path in package_dict[spec_type] if path in spec_paths]
 
@@ -448,7 +448,7 @@ class CapabilityServer(object):
         for interface in interfaces:
             # Collect the providers for each interface
             providers = [n
-                         for n, p in self.__spec_index.providers.items()
+                         for n, p in list(self.__spec_index.providers.items())
                          if p.implements == interface]
             if not providers:
                 # If an interface has not providers, ignore it
@@ -494,7 +494,7 @@ class CapabilityServer(object):
         # Summarize defaults
         if self.__default_providers:
             rospy.loginfo("For each available interface, the default provider:")
-            for interface, provider in self.__default_providers.items():
+            for interface, provider in list(self.__default_providers.items()):
                 rospy.loginfo("'{0}'".format(interface))
                 rospy.loginfo("  => '{0}'".format(provider))
                 rospy.loginfo("")
@@ -564,7 +564,7 @@ class CapabilityServer(object):
     def __remove_terminated_capabilities(self):
         # collect all of the terminated capabilities
         terminated = [x
-                      for x in self.__capability_instances.values()
+                      for x in list(self.__capability_instances.values())
                       if x.state == 'terminated']
         # Remove terminated instances
         for instance in terminated:
@@ -580,7 +580,7 @@ class CapabilityServer(object):
         """
         # Collect all running capabilities
         running_capabilities = [x
-                                for x in self.__capability_instances.values()
+                                for x in list(self.__capability_instances.values())
                                 if x.state == 'running']
         for cap in running_capabilities:
             if cap.started_by == USER_SERVICE_REASON:
@@ -607,7 +607,7 @@ class CapabilityServer(object):
     def __update_graph(self):
         # collect all of the waiting capabilities
         waiting = [x
-                   for x in self.__capability_instances.values()
+                   for x in list(self.__capability_instances.values())
                    if x.state == 'waiting']
         # If any of the waiting have no blocking dependencies start them
         for instance in waiting:
@@ -651,7 +651,7 @@ class CapabilityServer(object):
 
     def __get_provider_dependencies(self, provider):
         result = []
-        for interface, dep in provider.dependencies.items():
+        for interface, dep in list(provider.dependencies.items()):
             provider_name = dep.provider or self.__default_providers[interface]
             if provider_name not in self.__spec_index.providers:
                 # This is the case where a provider depends on another interface,
@@ -677,11 +677,11 @@ class CapabilityServer(object):
         if allow_semantic:
             # Add semantic interfaces which redefine this one
             valid_interfaces.extend(
-                [k for k, v in self.__spec_index.semantic_interfaces.items()
+                [k for k, v in list(self.__spec_index.semantic_interfaces.items())
                  if v.redefines == interface]
             )
         providers = dict([(n, p)
-                          for n, p in self.__spec_index.providers.items()
+                          for n, p in list(self.__spec_index.providers.items())
                           if p.implements in valid_interfaces])
         return providers  # Could be empty
 
@@ -729,7 +729,7 @@ class CapabilityServer(object):
     def _handle_get_capability_specs(self, req):
         rospy.loginfo("Servicing request for capability specs...")
         response = GetCapabilitySpecsResponse()
-        for package_name, package_dict in self.spec_file_index.items():
+        for package_name, package_dict in list(self.spec_file_index.items()):
             for spec_type in ['capability_interface', 'semantic_capability_interface', 'capability_provider']:
                 for path in package_dict[spec_type]:
                     with open(path, 'r') as f:
@@ -757,7 +757,7 @@ class CapabilityServer(object):
     def _handle_get_capability_spec(self, req):
         rospy.loginfo("Servicing request for get capability spec '{0}'...".format(req.capability_spec))
         response = GetCapabilitySpecResponse()
-        for package_name, package_dict in self.spec_file_index.items():
+        for package_name, package_dict in list(self.spec_file_index.items()):
             for spec_type in ['capability_interface', 'semantic_capability_interface', 'capability_provider']:
                 for path in package_dict[spec_type]:
                     with open(path, 'r') as f:
@@ -826,7 +826,7 @@ class CapabilityServer(object):
 
     def __free_capabilities_by_bond_id(self, bond_id):
         if bond_id in self.__bonds:
-            for capability in self.__capability_instances.values():
+            for capability in list(self.__capability_instances.values()):
                 if bond_id in capability.bonds:
                     del capability.bonds[bond_id]
                     if capability.reference_count == 0:
@@ -925,7 +925,7 @@ class CapabilityServer(object):
     def _handle_get_semantic_interfaces(self, req):
         if req.interface:
             sifaces = [si.name
-                       for si in self.__spec_index.semantic_interfaces.values()
+                       for si in list(self.__spec_index.semantic_interfaces.values())
                        if si.redefines == req.interface]
         else:
             sifaces = self.__spec_index.semantic_interface_names
@@ -936,7 +936,7 @@ class CapabilityServer(object):
 
     def _handle_get_running_capabilities(self, req):
         resp = GetRunningCapabilitiesResponse()
-        for instance in self.__capability_instances.values():
+        for instance in list(self.__capability_instances.values()):
             if instance.state not in ['running']:  # pragma: no cover
                 continue
             running_capability = RunningCapability()
@@ -965,7 +965,7 @@ class CapabilityServer(object):
         if req.spec in list(self.__capability_instances.keys()):
             interface = self.__capability_instances[req.spec]
         else:
-            providers = dict([(i.provider.name, i) for i in self.__capability_instances.values()])
+            providers = dict([(i.provider.name, i) for i in list(self.__capability_instances.values())])
             if req.spec not in providers:
                 raise RuntimeError("Spec '{0}' is neither a running Interface nor a running Provider."
                                    .format(req.spec))
@@ -981,18 +981,18 @@ class CapabilityServer(object):
         for iface in reversed(self.__get_capability_instances_from_provider(interface.provider)):
             # For each iterate over their remappings and add them to the combined remappings,
             # flattening the remappings as you go
-            for map_type, mapping in iface.provider.remappings_by_type.items():
+            for map_type, mapping in list(iface.provider.remappings_by_type.items()):
                 assert map_type in remappings
                 remappings[map_type].update(mapping)
             # Collapse remapping chains
-            for mapping in remappings.values():
-                for key, value in mapping.items():
+            for mapping in list(remappings.values()):
+                for key, value in list(mapping.items()):
                     if value in mapping:
                         mapping[key] = mapping[value]
                         del mapping[value]
-        for map_type, mapping in remappings.items():
+        for map_type, mapping in list(remappings.items()):
             resp_mapping = getattr(resp, map_type)
-            for key, value in mapping.items():
+            for key, value in list(mapping.items()):
                 remapping = Remapping()
                 remapping.key = key
                 remapping.value = value

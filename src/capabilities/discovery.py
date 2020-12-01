@@ -157,7 +157,7 @@ def package_index_from_package_path(package_paths):
     """
     result = {}
     for path in reversed(package_paths):
-        for package_path, package in find_packages(path).items():
+        for package_path, package in list(find_packages(path).items()):
             result[package.name] = package
     return result
 
@@ -192,7 +192,7 @@ def spec_file_index_from_package_index(package_index):
     :rtype: :py:obj:`dict`
     """
     spec_file_index = {}
-    for package_name, package in package_index.items():
+    for package_name, package in list(package_index.items()):
         spec_file_index[package_name] = {
             'package': package,
             'capability_interface': [],
@@ -226,7 +226,7 @@ def _spec_loader(spec_thing_index, spec_thing_loaders):
         InvalidProvider
     )
     # First load and process CapabilityInterface's
-    for package_name, package_dict in spec_thing_index.items():
+    for package_name, package_dict in list(spec_thing_index.items()):
         interface_things = package_dict['capability_interface']
         for thing in interface_things:
             try:
@@ -234,7 +234,7 @@ def _spec_loader(spec_thing_index, spec_thing_loaders):
             except error_types as e:
                 errors.append(e)
     # Then load the SemanticCapabilityInterface's
-    for package_name, package_dict in spec_thing_index.items():
+    for package_name, package_dict in list(spec_thing_index.items()):
         semantic_interface_things = package_dict['semantic_capability_interface']
         for thing in semantic_interface_things:
             try:
@@ -242,7 +242,7 @@ def _spec_loader(spec_thing_index, spec_thing_loaders):
             except error_types as e:
                 errors.append(e)
     # Finally load the CapabilityProvider's
-    for package_name, package_dict in spec_thing_index.items():
+    for package_name, package_dict in list(spec_thing_index.items()):
         capability_provider_things = package_dict['capability_provider']
         for thing in capability_provider_things:
             try:
@@ -464,7 +464,7 @@ class SpecIndex(object):
         :returns: list of capability interface names
         :rtype: :py:obj:`list` (:py:obj:`str`)
         """
-        return [n for n in self.__interfaces.keys()]
+        return [n for n in list(self.__interfaces.keys())]
 
     @property
     def interfaces(self):
@@ -472,7 +472,7 @@ class SpecIndex(object):
         :returns: dict of capability interfaces, keyed by name
         :rtype: :py:obj:`dict` {:py:obj:`str`: :py:class:`.specs.interface.CapabilityInterface`}
         """
-        return dict([(n, x['instance']) for n, x in self.__interfaces.items()])
+        return dict([(n, x['instance']) for n, x in list(self.__interfaces.items())])
 
     @property
     def interface_paths(self):
@@ -480,7 +480,7 @@ class SpecIndex(object):
         :returns: dict of capability interface spec paths, keyed by name
         :rtype: :py:obj:`dict` {:py:obj:`str`: :py:obj:`str`}
         """
-        return dict([(n, x['path']) for n, x in self.__interfaces.items()])
+        return dict([(n, x['path']) for n, x in list(self.__interfaces.items())])
 
     @property
     def provider_names(self):
@@ -488,7 +488,7 @@ class SpecIndex(object):
         :returns: list of capability provider names
         :rtype: :py:obj:`list` (:py:obj:`str`)
         """
-        return [n for n in self.__providers.keys()]
+        return [n for n in list(self.__providers.keys())]
 
     @property
     def providers(self):
@@ -496,7 +496,7 @@ class SpecIndex(object):
         :returns: dict of capability providers, keyed by name
         :rtype: :py:obj:`dict` {:py:obj:`str`: :py:class:`.specs.provider.CapabilityProvider`}
         """
-        return dict([(n, x['instance']) for n, x in self.__providers.items()])
+        return dict([(n, x['instance']) for n, x in list(self.__providers.items())])
 
     @property
     def provider_paths(self):
@@ -504,7 +504,7 @@ class SpecIndex(object):
         :returns: dict of capability provider spec paths, keyed by name
         :rtype: :py:obj:`dict` {:py:obj:`str`: :py:obj:`str`}
         """
-        return dict([(n, x['path']) for n, x in self.__providers.items()])
+        return dict([(n, x['path']) for n, x in list(self.__providers.items())])
 
     @property
     def semantic_interface_names(self):
@@ -512,7 +512,7 @@ class SpecIndex(object):
         :returns: list of semantic capability interface names
         :rtype: :py:obj:`list` (:py:obj:`str`)
         """
-        return [n for n in self.__semantic_interfaces.keys()]
+        return [n for n in list(self.__semantic_interfaces.keys())]
 
     @property
     def semantic_interfaces(self):
@@ -520,7 +520,7 @@ class SpecIndex(object):
         :returns: dict of semantic capability interfaces, keyed by name
         :rtype: :py:obj:`dict` {:py:obj:`str`: :py:class:`.specs.semantic_interface.SemanticCapabilityInterface`}
         """
-        return dict([(n, x['instance']) for n, x in self.__semantic_interfaces.items()])
+        return dict([(n, x['instance']) for n, x in list(self.__semantic_interfaces.items())])
 
     @property
     def semantic_interface_paths(self):
@@ -528,4 +528,4 @@ class SpecIndex(object):
         :returns: dict of semantic capability interface spec paths, keyed by name
         :rtype: :py:obj:`dict` {:py:obj:`str`: :py:obj:`str`}
         """
-        return dict([(n, x['path']) for n, x in self.__semantic_interfaces.items()])
+        return dict([(n, x['path']) for n, x in list(self.__semantic_interfaces.items())])

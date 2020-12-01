@@ -308,7 +308,7 @@ class Interface(object):
 
     @property
     def topics(self):
-        return dict([(name, topics[name]) for topics in self.__topics.values() for name in topics])
+        return dict([(name, topics[name]) for topics in list(self.__topics.values()) for name in topics])
 
     @property
     def required_topics(self):
@@ -336,7 +336,7 @@ class Interface(object):
 
     @property
     def services(self):
-        return dict([(name, services[name]) for services in self.__services.values() for name in services])
+        return dict([(name, services[name]) for services in list(self.__services.values()) for name in services])
 
     @property
     def required_services(self):
@@ -364,7 +364,7 @@ class Interface(object):
 
     @property
     def actions(self):
-        return dict([(name, actions[name]) for actions in self.__actions.values() for name in actions])
+        return dict([(name, actions[name]) for actions in list(self.__actions.values()) for name in actions])
 
     @property
     def required_actions(self):
@@ -392,7 +392,7 @@ class Interface(object):
 
     @property
     def parameters(self):
-        return dict([(name, actions[name]) for actions in self.__parameters.values() for name in actions])
+        return dict([(name, actions[name]) for actions in list(self.__parameters.values()) for name in actions])
 
     @property
     def required_parameters(self):
@@ -489,76 +489,76 @@ class CapabilityInterface(Interface):
         elements = "topics:\n"
         required_and_provided = list(self.required_topics.keys()) + list(self.provided_topics.keys())
         both = [x for x in self.topics if x not in required_and_provided]
-        for name, topic in self.topics.items():
+        for name, topic in list(self.topics.items()):
             if name not in both:
                 continue
             elements += "      '" + name + "':\n        "
             elements += "\n        ".join(str(topic).splitlines())
             elements += "\n"
         elements += "      requires:\n"
-        for name, topic in self.required_topics.items():
+        for name, topic in list(self.required_topics.items()):
             elements += "        '" + name + "':\n        "
             elements += "\n          ".join(str(topic).splitlines())
             elements += "\n"
         elements += "      provides:\n"
-        for name, topic in self.provided_topics.items():
+        for name, topic in list(self.provided_topics.items()):
             elements += "        '" + name + "':\n        "
             elements += "\n          ".join(str(topic).splitlines())
             elements += "\n"
         elements += "    services:\n"
         required_and_provided = list(self.required_services.keys()) + list(self.provided_services.keys())
         both = [x for x in self.services if x not in required_and_provided]
-        for name, service in self.services.items():
+        for name, service in list(self.services.items()):
             if name not in both:
                 continue
             elements += "      '" + name + "':\n        "
             elements += "\n        ".join(str(service).splitlines())
             elements += "\n"
         elements += "      requires:\n"
-        for name, service in self.required_services.items():
+        for name, service in list(self.required_services.items()):
             elements += "        '" + name + "':\n        "
             elements += "\n          ".join(str(service).splitlines())
             elements += "\n"
         elements += "      provides:\n"
-        for name, service in self.provided_services.items():
+        for name, service in list(self.provided_services.items()):
             elements += "        '" + name + "':\n        "
             elements += "\n          ".join(str(service).splitlines())
             elements += "\n"
         elements += "    actions:\n"
         required_and_provided = list(self.required_actions.keys()) + list(self.provided_actions.keys())
         both = [x for x in self.actions if x not in required_and_provided]
-        for name, action in self.actions.items():
+        for name, action in list(self.actions.items()):
             if name not in both:
                 continue
             elements += "      '" + name + "':\n        "
             elements += "\n        ".join(str(action).splitlines())
             elements += "\n"
         elements += "      requires:\n"
-        for name, action in self.required_actions.items():
+        for name, action in list(self.required_actions.items()):
             elements += "        '" + name + "':\n        "
             elements += "\n          ".join(str(action).splitlines())
             elements += "\n"
         elements += "      provides:\n"
-        for name, action in self.provided_actions.items():
+        for name, action in list(self.provided_actions.items()):
             elements += "        '" + name + "':\n        "
             elements += "\n          ".join(str(action).splitlines())
             elements += "\n"
         elements += "    parameters:\n"
         required_and_provided = list(self.required_parameters.keys()) + list(self.provided_parameters.keys())
         both = [x for x in self.parameters if x not in required_and_provided]
-        for name, parameter in self.parameters.items():
+        for name, parameter in list(self.parameters.items()):
             if name not in both:
                 continue
             elements += "      '" + name + "':\n        "
             elements += "\n        ".join(str(parameter).splitlines())
             elements += "\n"
         elements += "      requires:\n"
-        for name, parameter in self.required_parameters.items():
+        for name, parameter in list(self.required_parameters.items()):
             elements += "        '" + name + "':\n        "
             elements += "\n          ".join(str(parameter).splitlines())
             elements += "\n"
         elements += "      provides:\n"
-        for name, parameter in self.provided_parameters.items():
+        for name, parameter in list(self.provided_parameters.items()):
             elements += "        '" + name + "':\n        "
             elements += "\n          ".join(str(parameter).splitlines())
             elements += "\n"
