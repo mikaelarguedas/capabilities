@@ -233,6 +233,7 @@ class CapabilitiesClient(object):
         """Cleanly frees any used capabilities."""
         if self._bond:
             self._bond.break_bond()
+            self._bond = None
 
     def use_capability(self, capability_interface, preferred_provider=None, timeout=None):
         """Declares that this capability is being used.
